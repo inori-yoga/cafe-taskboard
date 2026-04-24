@@ -6,387 +6,279 @@
 <title>カスケード BBQ&カフェ — タスクボード</title>
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+JP:wght@400;500;700&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
 <style>
-:root{
-  --brown:#c8976e;--brown-dk:#9e6d47;--red:#d94f2b;--orange:#e8883e;
-  --green:#3fa876;--ink:#1c1713;--muted:#7a6f66;--rule:#ede8e2;
-  --bg:#f5f0eb;--card:#ffffff;
-}
+:root{--brown:#c8976e;--brown-dk:#9e6d47;--red:#d94f2b;--orange:#e8883e;--green:#3fa876;--ink:#1c1713;--muted:#7a6f66;--rule:#ede8e2;--bg:#f5f0eb;--card:#ffffff}
 *{box-sizing:border-box;margin:0;padding:0}
 body{font-family:'Noto Sans JP',sans-serif;background:var(--bg);color:var(--ink);min-height:100vh}
-
-/* Topbar */
 .topbar{background:var(--ink);color:#fff;padding:10px 20px;display:flex;align-items:center;justify-content:space-between;position:sticky;top:0;z-index:50}
-.topbar .logo{font-size:14px;font-weight:700;letter-spacing:0.5px}
-.topbar .sub{font-size:10px;color:var(--brown);margin-top:1px;font-family:'JetBrains Mono',monospace}
-.topbar .right{display:flex;align-items:center;gap:8px}
+.logo{font-size:14px;font-weight:700}.sub{font-size:10px;color:var(--brown);margin-top:1px;font-family:'JetBrains Mono',monospace}
 .name-input{background:#2c2620;border:1px solid #4a3f36;border-radius:6px;padding:5px 10px;color:#fff;font-size:12px;width:90px;font-family:inherit}
 .name-input::placeholder{color:#665}
-
-/* Progress */
-.prog-bar-wrap{background:var(--card);border-bottom:1px solid var(--rule);padding:10px 20px}
+.prog-wrap{background:var(--card);border-bottom:1px solid var(--rule);padding:10px 20px}
 .prog-row{display:flex;align-items:center;gap:10px}
 .prog-track{flex:1;height:5px;background:var(--rule);border-radius:99px;overflow:hidden}
 .prog-fill{height:100%;background:var(--brown);border-radius:99px;transition:width 0.4s}
-.prog-fill.done{background:var(--green)}
-.prog-label{font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;white-space:nowrap}
-
-/* Tabs */
-.tabs{display:flex;gap:6px;margin-top:8px}
-.tab{padding:4px 12px;border-radius:6px;border:1px solid var(--rule);background:var(--card);font-size:11px;font-weight:500;cursor:pointer;color:var(--muted);transition:all 0.15s}
+.prog-fill.all{background:var(--green)}
+.prog-lbl{font-size:11px;color:var(--muted);font-family:'JetBrains Mono',monospace;white-space:nowrap}
+.tabs{display:flex;gap:6px;margin-top:8px;flex-wrap:wrap}
+.tab{padding:4px 12px;border-radius:6px;border:1px solid var(--rule);background:var(--card);font-size:11px;font-weight:500;cursor:pointer;color:var(--muted)}
 .tab.active{border-color:var(--brown);background:#fdf6ef;color:var(--brown-dk)}
-.tab:hover{border-color:#ccc}
-
-/* Board */
-.board{display:flex;gap:10px;padding:14px 12px;overflow-x:auto;min-height:calc(100vh - 120px);align-items:flex-start}
-.column{flex:1;min-width:240px;max-width:400px;background:var(--card);border-radius:10px;border:1px solid var(--rule)}
-.column.done-col{background:#f7f4f0}
+.reset-btn{padding:4px 10px;border-radius:6px;border:1px solid #ddd;background:var(--card);color:#bbb;font-size:10px;cursor:pointer;margin-left:auto}
+.board{display:flex;gap:10px;padding:14px 12px;overflow-x:auto;min-height:calc(100vh - 130px);align-items:flex-start}
+.col{flex:1;min-width:240px;max-width:400px;background:var(--card);border-radius:10px;border:1px solid var(--rule)}
+.col.done-col{background:#f7f4f0}
 .col-head{padding:10px 14px;border-bottom:1px solid var(--rule);display:flex;align-items:center;gap:8px}
-.col-icon{font-size:13px}
-.col-title{font-weight:700;font-size:12px;letter-spacing:0.03em}
-.col-count{margin-left:auto;font-size:10px;color:#bbb;background:var(--bg);border-radius:99px;padding:1px 7px;font-family:'JetBrains Mono',monospace}
+.col-title{font-weight:700;font-size:12px}
+.col-cnt{margin-left:auto;font-size:10px;color:#bbb;background:var(--bg);border-radius:99px;padding:1px 7px;font-family:'JetBrains Mono',monospace}
 .col-body{padding:6px}
-
-/* Cards */
-.card{background:var(--card);border:1px solid var(--rule);border-radius:8px;padding:10px 12px;margin-bottom:6px;cursor:pointer;transition:box-shadow 0.15s,transform 0.1s;position:relative}
-.card:hover{box-shadow:0 2px 8px rgba(0,0,0,0.07)}
-.card:active{transform:scale(0.99)}
-.done-col .card{background:#faf7f3;opacity:0.65}
-.card-badges{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:5px}
-.badge{font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;color:#fff;letter-spacing:0.03em}
-.badge-attn{background:var(--red)}
-.badge-rsv{background:#2a7ab5}
-.badge-open{background:var(--brown)}
-.badge-close{background:#6b7280}
-.badge-pri{background:#fde8e8;color:#a32d2d}
+.card{background:var(--card);border:1px solid var(--rule);border-radius:8px;padding:10px 12px;margin-bottom:6px;cursor:pointer;transition:box-shadow .15s}
+.card:hover{box-shadow:0 2px 8px rgba(0,0,0,.07)}
+.done-col .card{background:#faf7f3;opacity:.65}
+.badges{display:flex;gap:4px;flex-wrap:wrap;margin-bottom:5px}
+.b{font-size:9px;font-weight:700;padding:1px 6px;border-radius:3px;color:#fff}
+.b-attn{background:var(--red)}.b-rsv{background:#2a7ab5}.b-open{background:var(--brown)}.b-close{background:#6b7280}
+.b-hi{background:#fde8e8;color:#a32d2d!important}.b-mid{background:#fef3d6;color:#854f0b!important}
 .card-text{font-size:12px;line-height:1.55}
 .done-col .card-text{text-decoration:line-through;color:#999}
 .card-meta{font-size:10px;color:#bbb;margin-top:4px}
-.card-comments{font-size:10px;color:var(--brown);margin-top:3px}
-
-/* Add task */
+.card-cmt{font-size:10px;color:var(--brown);margin-top:3px}
 .add-btn{display:block;width:100%;padding:7px 0;background:none;border:1px dashed #ddd;border-radius:8px;color:#ccc;font-size:11px;cursor:pointer;margin-top:4px;font-family:inherit}
-.add-btn:hover{border-color:#bbb;color:#999}
 .add-form{padding:6px}
-.add-input{width:100%;border:1px solid var(--brown);border-radius:6px;padding:8px;font-size:12px;resize:vertical;min-height:44px;font-family:inherit}
-.add-actions{display:flex;gap:4px;margin-top:6px}
-.btn-add{padding:4px 12px;background:var(--brown);color:#fff;border:none;border-radius:6px;font-size:11px;cursor:pointer}
-.btn-cancel{padding:4px 12px;background:#eee;border:none;border-radius:6px;font-size:11px;cursor:pointer;color:#888}
-
-/* Modal */
-.overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,0.4);display:flex;align-items:center;justify-content:center;z-index:100;padding:16px}
+.add-ta{width:100%;border:1px solid var(--brown);border-radius:6px;padding:8px;font-size:12px;resize:vertical;min-height:44px;font-family:inherit}
+.add-row{display:flex;gap:4px;margin-top:6px}
+.btn-ok{padding:4px 12px;background:var(--brown);color:#fff;border:none;border-radius:6px;font-size:11px;cursor:pointer}
+.btn-ng{padding:4px 12px;background:#eee;border:none;border-radius:6px;font-size:11px;cursor:pointer;color:#888}
+.overlay{position:fixed;top:0;left:0;right:0;bottom:0;background:rgba(0,0,0,.4);display:flex;align-items:center;justify-content:center;z-index:100;padding:16px}
 .modal{background:#fff;border-radius:14px;width:100%;max-width:420px;max-height:85vh;overflow:auto;padding:20px}
-.modal-badges{display:flex;gap:5px;flex-wrap:wrap;margin-bottom:8px}
-.modal-title{font-size:15px;font-weight:700;line-height:1.5;margin-bottom:14px}
-.modal-done{font-size:11px;color:var(--green);margin-bottom:10px}
-.move-btns{display:flex;gap:6px;margin-bottom:14px}
-.move-btn{flex:1;padding:8px 0;border-radius:8px;font-size:11px;font-weight:500;cursor:pointer;border:none;font-family:inherit}
-.move-todo{background:var(--bg);color:var(--ink)}
-.move-doing{background:var(--brown);color:#fff}
-.move-done{background:var(--green);color:#fff}
-.comments-section{border-top:1px solid var(--rule);padding-top:10px}
-.comments-label{font-size:11px;font-weight:700;color:#aaa;margin-bottom:6px}
-.comment-item{background:#faf7f3;border-radius:6px;padding:7px 9px;margin-bottom:4px}
-.comment-by{font-size:10px;color:var(--brown);font-weight:500}
-.comment-text{font-size:12px;margin-top:2px}
-.comment-form{display:flex;gap:4px;margin-top:8px}
-.comment-input{flex:1;border:1px solid #ddd;border-radius:6px;padding:6px 8px;font-size:12px;font-family:inherit}
-.comment-send{padding:6px 12px;background:var(--brown);color:#fff;border:none;border-radius:6px;font-size:11px;cursor:pointer;white-space:nowrap}
-.modal-footer{display:flex;justify-content:space-between;margin-top:14px;padding-top:10px;border-top:1px solid var(--rule)}
-.btn-delete{font-size:10px;color:var(--red);background:none;border:none;cursor:pointer}
-.btn-close{padding:5px 14px;background:var(--bg);border:none;border-radius:6px;font-size:11px;cursor:pointer;color:#666}
-
-/* Stock view */
-.stock-wrap{padding:16px;max-width:640px;margin:0 auto}
-.stock-title{font-size:13px;font-weight:700;margin-bottom:10px}
-.stock-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
-@media(max-width:600px){.stock-grid{grid-template-columns:1fr 1fr}}
-.stock-cell{background:var(--card);border:1px solid var(--rule);border-radius:8px;padding:9px 11px}
-.stock-name{font-size:10px;color:#999}
-.stock-val{font-size:16px;font-weight:700;margin-top:2px;font-family:'JetBrains Mono',monospace}
-.stock-val.low{color:var(--red)}
-.stock-val.warn{color:var(--orange)}
-.stock-val.ok{color:var(--green)}
-
-/* Handover */
-.handover-wrap{padding:16px;max-width:640px;margin:0 auto}
-.handover-title{font-size:13px;font-weight:700;margin-bottom:10px}
-.handover-card{background:var(--card);border:1px solid var(--rule);border-radius:8px;padding:10px 13px;margin-bottom:6px}
-.handover-badges{display:flex;gap:4px;align-items:center;margin-bottom:4px}
-.handover-text{font-size:12px;line-height:1.5}
-.handover-comment{font-size:10px;color:#999;margin-top:4px}
-.handover-empty{text-align:center;padding:40px 0;color:#bbb;font-size:13px}
-
-.reset-btn{padding:4px 10px;border-radius:6px;border:1px solid #ddd;background:var(--card);color:#bbb;font-size:10px;cursor:pointer}
+.m-title{font-size:15px;font-weight:700;line-height:1.5;margin-bottom:14px}
+.m-done{font-size:11px;color:var(--green);margin-bottom:10px}
+.move-row{display:flex;gap:6px;margin-bottom:14px}
+.mv{flex:1;padding:8px 0;border-radius:8px;font-size:11px;font-weight:500;cursor:pointer;border:none;font-family:inherit}
+.mv-todo{background:var(--bg);color:var(--ink)}.mv-doing{background:var(--brown);color:#fff}.mv-done{background:var(--green);color:#fff}
+.cmt-sec{border-top:1px solid var(--rule);padding-top:10px}
+.cmt-lbl{font-size:11px;font-weight:700;color:#aaa;margin-bottom:6px}
+.cmt-item{background:#faf7f3;border-radius:6px;padding:7px 9px;margin-bottom:4px}
+.cmt-by{font-size:10px;color:var(--brown);font-weight:500}
+.cmt-txt{font-size:12px;margin-top:2px}
+.cmt-form{display:flex;gap:4px;margin-top:8px}
+.cmt-inp{flex:1;border:1px solid #ddd;border-radius:6px;padding:6px 8px;font-size:12px;font-family:inherit}
+.cmt-send{padding:6px 12px;background:var(--brown);color:#fff;border:none;border-radius:6px;font-size:11px;cursor:pointer;white-space:nowrap}
+.m-footer{display:flex;justify-content:space-between;margin-top:14px;padding-top:10px;border-top:1px solid var(--rule)}
+.btn-del{font-size:10px;color:var(--red);background:none;border:none;cursor:pointer}
+.btn-cls{padding:5px 14px;background:var(--bg);border:none;border-radius:6px;font-size:11px;cursor:pointer;color:#666}
+.view-wrap{padding:14px;max-width:640px;margin:0 auto}
+.sec-title{font-size:13px;font-weight:700;margin-bottom:10px}
+.stk-grid{display:grid;grid-template-columns:1fr 1fr 1fr;gap:6px}
+@media(max-width:600px){.stk-grid{grid-template-columns:1fr 1fr}}
+.stk-cell{background:var(--card);border:1px solid var(--rule);border-radius:8px;padding:9px 11px}
+.stk-name{font-size:10px;color:#999}
+.stk-val{font-size:16px;font-weight:700;margin-top:2px;font-family:'JetBrains Mono',monospace}
+.stk-val.low{color:var(--red)}.stk-val.warn{color:var(--orange)}.stk-val.ok{color:var(--green)}
+.ho-card{background:var(--card);border:1px solid var(--rule);border-radius:8px;padding:10px 13px;margin-bottom:6px}
+.ho-note{font-size:10px;color:#999;margin-top:4px}
+.log-item{background:var(--card);border:1px solid var(--rule);border-radius:8px;padding:12px 14px;margin-bottom:8px}
+.log-hdr{display:flex;align-items:center;gap:8px;margin-bottom:6px}
+.log-date{font-size:11px;font-weight:700;color:var(--brown);font-family:'JetBrains Mono',monospace}
+.log-by{font-size:11px;color:var(--muted)}
+.log-txt{font-size:12px;line-height:1.7;white-space:pre-wrap}
 .hidden{display:none}
 </style>
 </head>
 <body>
-
 <div class="topbar">
-  <div>
-    <div class="logo">☕ CASCADE BBQ & CAFE</div>
-    <div class="sub" id="dateLabel">TASK BOARD</div>
-  </div>
-  <div class="right">
-    <input class="name-input" id="nameInput" placeholder="名前を入力">
-  </div>
+  <div><div class="logo">☕ CASCADE BBQ & CAFE</div><div class="sub" id="dateLabel"></div></div>
+  <input class="name-input" id="nameInput" placeholder="名前を入力">
 </div>
-
-<div class="prog-bar-wrap">
+<div class="prog-wrap">
   <div class="prog-row">
-    <div class="prog-track"><div class="prog-fill" id="progFill"></div></div>
-    <span class="prog-label" id="progLabel">0/0</span>
+    <div class="prog-track"><div class="prog-fill" id="pf"></div></div>
+    <span class="prog-lbl" id="pl"></span>
   </div>
   <div class="tabs">
     <div class="tab active" data-view="board">カンバン</div>
     <div class="tab" data-view="stock">在庫</div>
     <div class="tab" data-view="handover">引き継ぎ</div>
-    <button class="reset-btn" id="resetBtn" style="margin-left:auto">リセット</button>
+    <div class="tab" data-view="log">共有日誌</div>
+    <button class="reset-btn" id="resetBtn">リセット</button>
   </div>
 </div>
-
 <div id="boardView" class="board"></div>
-<div id="stockView" class="stock-wrap hidden"></div>
-<div id="handoverView" class="handover-wrap hidden"></div>
-<div id="modalOverlay" class="overlay hidden"></div>
+<div id="stockView" class="view-wrap hidden"></div>
+<div id="handoverView" class="view-wrap hidden"></div>
+<div id="logView" class="view-wrap hidden"></div>
+<div id="ov" class="overlay hidden"></div>
 
 <script>
-var STORAGE_KEY = "cascade-kanban-v2";
-
-var DEFAULT_TASKS = [
-  {id:"t1",text:"BBQフライヤー不在 → 4/24 PM 管理事務所受取",cat:"注意",status:"todo",pri:"high",comments:[{by:"いのり",at:"4/22",text:"見当たりません"}],doneBy:"",doneAt:""},
-  {id:"t2",text:"クリープ 賞味期限4/30 → 積極的に消費",cat:"注意",status:"todo",pri:"high",comments:[],doneBy:"",doneAt:""},
-  {id:"t3",text:"コーヒーミルク・タレ（残4）→ 買い出しリスト追加",cat:"注意",status:"todo",pri:"high",comments:[],doneBy:"",doneAt:""},
-  {id:"t4",text:"5/1昼 20名予約 → 折り返し連絡対応",cat:"予約",status:"todo",pri:"high",comments:[],doneBy:"",doneAt:""},
-  {id:"t5",text:"左近様 5/5夕方キャンセル・5/6そのまま確認",cat:"予約",status:"todo",pri:"mid",comments:[],doneBy:"",doneAt:""},
-  {id:"t6",text:"中村様（㈱キタニ）5/24 見積対応",cat:"予約",status:"doing",pri:"mid",comments:[{by:"林",at:"4/20",text:"土井さんに見積依頼済み"}],doneBy:"",doneAt:""},
-  {id:"t7",text:"金庫おつり 33,000円 → レジへ",cat:"開店",status:"todo",pri:"low",comments:[],doneBy:"",doneAt:""},
-  {id:"t8",text:"PC起動 → 共有フォルダ・Webメール確認",cat:"開店",status:"todo",pri:"low",comments:[],doneBy:"",doneAt:""},
-  {id:"t9",text:"ドリンクディスペンサー キャップ外す",cat:"開店",status:"todo",pri:"low",comments:[],doneBy:"",doneAt:""},
-  {id:"t10",text:"コーヒーを作る（平日は豆1袋の半分）",cat:"開店",status:"todo",pri:"low",comments:[],doneBy:"",doneAt:""},
-  {id:"t11",text:"スピーカーでBGMを流す",cat:"開店",status:"todo",pri:"low",comments:[],doneBy:"",doneAt:""},
-  {id:"t12",text:"給湯電源ON・ガス栓を開く",cat:"開店",status:"todo",pri:"low",comments:[],doneBy:"",doneAt:""},
-  {id:"t13",text:"充電チェック（エアレジ・PC・スピーカー・携帯）",cat:"閉店",status:"todo",pri:"low",comments:[],doneBy:"",doneAt:""},
-  {id:"t14",text:"ディスペンサー拭き取り＋キャップ＋ラップ（虫対策）",cat:"閉店",status:"todo",pri:"low",comments:[],doneBy:"",doneAt:""},
-  {id:"t15",text:"共有日誌に引き継ぎ事項を記入",cat:"閉店",status:"todo",pri:"low",comments:[],doneBy:"",doneAt:""},
-  {id:"t16",text:"レジ締め → 戸締りチェック",cat:"閉店",status:"todo",pri:"low",comments:[],doneBy:"",doneAt:""},
-  {id:"t17",text:"看板・スピーカーをしまう",cat:"閉店",status:"todo",pri:"low",comments:[],doneBy:"",doneAt:""},
-  {id:"t18",text:"オレンジジュース納品・設置",cat:"注意",status:"done",pri:"mid",comments:[{by:"村松",at:"4/22",text:"納品・設置完了"}],doneBy:"村松",doneAt:"4/22 14:00"}
+var KEY="cascade-kanban-v3";
+var DT=[
+  {id:"t0",text:"【本日・最優先】久郷一樹園 高安さまがBBQ場に来訪 → 金庫の売上金ファイル2袋 ＋ 北陸ミート・かねぶん青果の請求書を手渡す（時間未定・在席必須）",cat:"注意",s:"todo",p:"high",c:[{by:"林",at:"4/24",t:"売上金ファイル2袋と請求書2枚を忘れずに準備しておくこと。時間未定なので在席しておく"}],db:"",da:""},
+  {id:"t1",text:"BBQフライヤー → 本日PM 管理事務所に届く予定・受取に行く",cat:"注意",s:"todo",p:"high",c:[{by:"いのり",at:"4/22",t:"4/24PMに管理事務所に届く予定"}],db:"",da:""},
+  {id:"t2",text:"クリープ 賞味期限4/30（残6日）→ 積極的に使い切る",cat:"注意",s:"todo",p:"high",c:[],db:"",da:""},
+  {id:"t3",text:"コーヒーミルク・タレ（残4）→ 次回買い出しリストに追加",cat:"注意",s:"todo",p:"high",c:[],db:"",da:""},
+  {id:"t4",text:"ポテト4種＆フローズンドリンクのサンプルが冷凍庫に届いている → GWに出すなら4/27までにまりえさんへ連絡",cat:"注意",s:"todo",p:"mid",c:[{by:"勝島",at:"4/22",t:"5/2にポテト食べ比べ企画の提案あり。UCCは5/1〜4休み、フライヤー問題あり"}],db:"",da:""},
+  {id:"t5",text:"5/1昼 20名予約件 → 状況確認（4/22に折り返し連絡予定だった）",cat:"予約",s:"todo",p:"high",c:[{by:"林",at:"4/20",t:"折り返し連絡対応済か要確認"}],db:"",da:""},
+  {id:"t6",text:"左近様 5/5夕方キャンセル・5/6はそのまま → 最終確認",cat:"予約",s:"todo",p:"mid",c:[],db:"",da:""},
+  {id:"t7",text:"中村様（㈱キタニ）5/24 大人14・子供9 見積対応",cat:"予約",s:"doing",p:"mid",c:[{by:"林",at:"4/20",t:"土井さんに見積依頼済み"}],db:"",da:""},
+  {id:"t8",text:"団体プラン（5/11〜）告知準備 → HP・SNS掲載（GW明け）",cat:"予約",s:"todo",p:"mid",c:[{by:"勝島",at:"4/22",t:"30名以上に提案。テラスは30名以下でも15000円で貸出可。5/11にHP・SNS掲載"}],db:"",da:""},
+  {id:"t9",text:"金庫おつり 33,000円 → レジへ入れる",cat:"開店",s:"todo",p:"low",c:[],db:"",da:""},
+  {id:"t10",text:"PC起動 → 共有フォルダ・Webメール確認（staff@cascade-bbq.jp）",cat:"開店",s:"todo",p:"low",c:[],db:"",da:""},
+  {id:"t11",text:"ドリンクディスペンサー キャップを外す・OJ残量確認",cat:"開店",s:"todo",p:"low",c:[],db:"",da:""},
+  {id:"t12",text:"コーヒーを作る（平日は豆1袋の半分）→ ウォーマーへ",cat:"開店",s:"todo",p:"low",c:[],db:"",da:""},
+  {id:"t13",text:"スピーカーでBGMを流す・給湯電源ON・ガス栓を開く",cat:"開店",s:"todo",p:"low",c:[],db:"",da:""},
+  {id:"t14",text:"充電チェック（エアレジ・PC・スピーカー・携帯）",cat:"閉店",s:"todo",p:"low",c:[],db:"",da:""},
+  {id:"t15",text:"ディスペンサー拭き取り＋キャップ＋ラップ（虫対策！）",cat:"閉店",s:"todo",p:"low",c:[],db:"",da:""},
+  {id:"t16",text:"共有日誌に引き継ぎ事項を記入",cat:"閉店",s:"todo",p:"low",c:[],db:"",da:""},
+  {id:"t17",text:"レジ締め → 戸締りチェック",cat:"閉店",s:"todo",p:"low",c:[],db:"",da:""},
+  {id:"t18",text:"看板・スピーカーをしまう",cat:"閉店",s:"todo",p:"low",c:[],db:"",da:""},
+  {id:"t99",text:"オレンジジュース（ディスペンサー）納品・設置",cat:"注意",s:"done",p:"mid",c:[{by:"村松",at:"4/22",t:"納品・設置済み。提供可"}],db:"村松",da:"4/22 14:00"},
 ];
-
-var STOCK = [
-  {name:"バリューセット(2人前)",val:"7セット",lv:"low"},
-  {name:"キッズセット(1人前)",val:"4セット",lv:"low"},
-  {name:"クリープ(期限4/30)",val:"約20個",lv:"warn"},
-  {name:"コーラ(ペット)",val:"3本",lv:"warn"},
-  {name:"アイス各種",val:"0.3〜1.8箱",lv:"warn"},
-  {name:"スティックシュガー",val:"64本",lv:"warn"},
-  {name:"キリンビール缶",val:"36本",lv:"ok"},
-  {name:"ノンアルビール",val:"49本",lv:"ok"},
-  {name:"ウーロン茶",val:"25本",lv:"ok"},
-  {name:"パン",val:"20個",lv:"ok"},
-  {name:"ワカモレ",val:"2箱+5",lv:"ok"},
-  {name:"バゲット",val:"17切",lv:"ok"}
+var STOCK=[
+  {n:"バリューセット(2人前)",v:"7セット",l:"low"},{n:"キッズセット(1人前)",v:"4セット",l:"low"},
+  {n:"クリープ(期限4/30)",v:"約20個",l:"warn"},{n:"コーラ(ペット)",v:"3本",l:"warn"},
+  {n:"アイス各種",v:"0.3〜1.8箱",l:"warn"},{n:"スティックシュガー",v:"64本",l:"warn"},
+  {n:"コーヒーミルク",v:"残り少し",l:"warn"},{n:"タレ",v:"4個",l:"warn"},
+  {n:"キリンビール缶",v:"36本",l:"ok"},{n:"ノンアルビール",v:"49本",l:"ok"},
+  {n:"ウーロン茶",v:"25本",l:"ok"},{n:"パン",v:"20個",l:"ok"},
+  {n:"ワカモレ",v:"2箱+5",l:"ok"},{n:"バゲット",v:"17切",l:"ok"},
 ];
+var LOG=[
+  {d:"4/22",by:"勝島",t:"ポテト4種類とフローズンドリンクのサンプルが届きました（冷凍庫）。GWに出すなら4/27までにまりえさんへ連絡を。\n\n団体プラン5/11〜開始：30名以上の場合に提案。テラスは30名以下でも15,000円で貸出可。5/11にHP・SNS掲載。"},
+  {d:"4/22",by:"いのり",t:"BBQ場のフライヤーが見当たりません→4/24PMに管理事務所に届く予定。\nオレンジジュース納入・提供可。\n「もう営業してる？」「場所だけ借りれない？」「キッズメニューは何歳まで？」などの問い合わせあり→よくある質問をまとめる方向で検討中。問い合わせ内容はここに随時メモしてください。"},
+  {d:"4/19",by:"村松",t:"タレ残り4・コーヒーミルク残り少し→買い出し時に購入お願いします。\nオレンジジュース在庫なし→発注済→4/22納品・設置完了。\nドリンクディスペンサーについてコカコーラさんに再確認お願い（林さんへ）。"},
+  {d:"4/17",by:"いのり",t:"4/19サワダ様→仕込み未。\nサンドイッチ納入→冷凍庫。納品書→事務所机。\n5月ヨガイベントチラシ適宜掲示（ラミネート済）。店頭申込は名前・メール・電話を名簿に記入（レジ横）。"},
+  {d:"4/16",by:"林",t:"野菜カット・肉仕分け・備品組み・ラミネートをお願いします→済（4/17）。\nしょこたんへ：お花見デザート数量ぎりぎり。チョコを一枚ずつ追加するか、グループ調整してください。"},
+  {d:"4/10",by:"林",t:"12日野菜カットがまだ・カトラリー組み11日12日ともまだ・アヒージョの冷凍野菜カットもまだ。\n手袋・マスク・マシュマロ類を日曜に補充。\nコーヒーフィルター納品ミスで在庫なし→明日はデロンギで対応。"},
+];
+var COLS=[{k:"todo",l:"未着手",i:"○"},{k:"doing",l:"対応中",i:"◐"},{k:"done",l:"完了",i:"●"}];
+var BMAP={"注意":"b-attn","予約":"b-rsv","開店":"b-open","閉店":"b-close"};
+var st={tasks:[],nm:""};
+var view="board",openId=null,addCol=null;
 
-var COLS = [{key:"todo",label:"未着手",icon:"○"},{key:"doing",label:"対応中",icon:"◐"},{key:"done",label:"完了",icon:"●"}];
-var CAT_COLORS = {"注意":"badge-attn","予約":"badge-rsv","開店":"badge-open","閉店":"badge-close"};
-
-var state = {tasks:[], staffName:""};
-var currentView = "board";
-var openCardId = null;
-var addingToCol = null;
-
-function now(){var d=new Date();return (d.getMonth()+1)+"/"+d.getDate()+" "+d.getHours()+":"+String(d.getMinutes()).padStart(2,"0")}
-function today(){var d=new Date();var days=["日","月","火","水","木","金","土"];return d.getFullYear()+"年"+(d.getMonth()+1)+"月"+d.getDate()+"日（"+days[d.getDay()]+"）"}
+function nstr(){var d=new Date();return(d.getMonth()+1)+"/"+d.getDate()+" "+d.getHours()+":"+String(d.getMinutes()).padStart(2,"0")}
+function tstr(){var d=new Date(),w=["日","月","火","水","木","金","土"];return d.getFullYear()+"年"+(d.getMonth()+1)+"月"+d.getDate()+"日（"+w[d.getDay()]+"）"}
 
 function load(){
-  try{
-    var raw = localStorage.getItem(STORAGE_KEY);
-    if(raw){state = JSON.parse(raw);return}
-  }catch(e){}
-  state = {tasks:DEFAULT_TASKS.map(function(t){return JSON.parse(JSON.stringify(t))}), staffName:""};
-  save();
+  try{var r=localStorage.getItem(KEY);if(r){st=JSON.parse(r);return}}catch(e){}
+  st={tasks:DT.map(function(t){return JSON.parse(JSON.stringify(t))}),nm:""};save();
 }
-function save(){
-  try{localStorage.setItem(STORAGE_KEY, JSON.stringify(state))}catch(e){}
-}
+function save(){try{localStorage.setItem(KEY,JSON.stringify(st))}catch(e){}}
 
 function render(){
-  document.getElementById("dateLabel").textContent = today() + " — TASK BOARD";
-  document.getElementById("nameInput").value = state.staffName;
-
-  var doneCount = state.tasks.filter(function(t){return t.status==="done"}).length;
-  var total = state.tasks.length;
-  var pct = total ? Math.round(doneCount/total*100) : 0;
-  var pf = document.getElementById("progFill");
-  pf.style.width = pct+"%";
-  pf.className = "prog-fill" + (pct===100?" done":"");
-  document.getElementById("progLabel").textContent = doneCount+"/"+total+" ("+pct+"%)";
-
-  if(currentView==="board") renderBoard();
-  else if(currentView==="stock") renderStock();
-  else renderHandover();
+  document.getElementById("dateLabel").textContent=tstr()+" — TASK BOARD";
+  document.getElementById("nameInput").value=st.nm;
+  var dn=st.tasks.filter(function(t){return t.s==="done"}).length,tot=st.tasks.length,pct=tot?Math.round(dn/tot*100):0;
+  var pf=document.getElementById("pf");pf.style.width=pct+"%";pf.className="prog-fill"+(pct===100?" all":"");
+  document.getElementById("pl").textContent=dn+"/"+tot+" ("+pct+"%)";
+  if(view==="board")rBoard();else if(view==="stock")rStock();else if(view==="handover")rHandover();else rLog();
 }
+function show(id){["boardView","stockView","handoverView","logView"].forEach(function(v){document.getElementById(v).classList.add("hidden")});document.getElementById(id).classList.remove("hidden")}
 
-function renderBoard(){
-  document.getElementById("boardView").classList.remove("hidden");
-  document.getElementById("stockView").classList.add("hidden");
-  document.getElementById("handoverView").classList.add("hidden");
-
-  var html = "";
+function rBoard(){
+  show("boardView");var h="";
   COLS.forEach(function(col){
-    var tasks = state.tasks.filter(function(t){return t.status===col.key});
-    html += '<div class="column'+(col.key==="done"?" done-col":"")+'">';
-    html += '<div class="col-head"><span class="col-icon">'+col.icon+'</span><span class="col-title">'+col.label+'</span><span class="col-count">'+tasks.length+'</span></div>';
-    html += '<div class="col-body">';
-    tasks.forEach(function(t){
-      html += '<div class="card" onclick="openModal(\''+t.id+'\')">';
-      html += '<div class="card-badges">';
-      html += '<span class="badge '+(CAT_COLORS[t.cat]||"badge-close")+'">'+t.cat+'</span>';
-      if(t.pri==="high") html += '<span class="badge badge-pri">急</span>';
-      html += '</div>';
-      html += '<div class="card-text">'+t.text+'</div>';
-      if(t.doneBy) html += '<div class="card-meta">✓ '+t.doneBy+' '+t.doneAt+'</div>';
-      if(t.comments.length) html += '<div class="card-comments">💬 '+t.comments.length+'</div>';
-      html += '</div>';
+    var ts=st.tasks.filter(function(t){return t.s===col.k});
+    h+='<div class="col'+(col.k==="done"?" done-col":"")+'"><div class="col-head"><span>'+col.i+'</span><span class="col-title">'+col.l+'</span><span class="col-cnt">'+ts.length+'</span></div><div class="col-body">';
+    ts.forEach(function(t){
+      var vc=t.c.filter(function(c){return c.t});
+      h+='<div class="card" onclick="openM(\''+t.id+'\')"><div class="badges"><span class="b '+(BMAP[t.cat]||"b-close")+'">'+t.cat+'</span>';
+      if(t.p==="high")h+='<span class="b b-hi">急</span>';else if(t.p==="mid")h+='<span class="b b-mid">中</span>';
+      h+='</div><div class="card-text">'+t.text+'</div>';
+      if(t.db)h+='<div class="card-meta">✓ '+t.db+' '+t.da+'</div>';
+      if(vc.length)h+='<div class="card-cmt">💬 '+vc.length+'</div>';
+      h+='</div>';
     });
-    if(addingToCol===col.key){
-      html += '<div class="add-form"><textarea class="add-input" id="addInput" placeholder="タスクを入力..."></textarea>';
-      html += '<div class="add-actions"><button class="btn-add" onclick="addTask(\''+col.key+'\')">追加</button><button class="btn-cancel" onclick="cancelAdd()">キャンセル</button></div></div>';
-    } else {
-      html += '<button class="add-btn" onclick="startAdd(\''+col.key+'\')">+ タスクを追加</button>';
+    if(addCol===col.k){
+      h+='<div class="add-form"><textarea class="add-ta" id="ai" placeholder="タスクを入力..."></textarea><div class="add-row"><button class="btn-ok" onclick="addTask(\''+col.k+'\')">追加</button><button class="btn-ng" onclick="cancelAdd()">キャンセル</button></div></div>';
+    }else{
+      h+='<button class="add-btn" onclick="startAdd(\''+col.k+'\')">+ タスクを追加</button>';
     }
-    html += '</div></div>';
+    h+='</div></div>';
   });
-  document.getElementById("boardView").innerHTML = html;
-  if(addingToCol){var inp=document.getElementById("addInput");if(inp)inp.focus()}
+  document.getElementById("boardView").innerHTML=h;
+  if(addCol){var i=document.getElementById("ai");if(i)i.focus()}
 }
 
-function renderStock(){
-  document.getElementById("boardView").classList.add("hidden");
-  document.getElementById("stockView").classList.remove("hidden");
-  document.getElementById("handoverView").classList.add("hidden");
-  var html = '<div class="stock-title">📦 在庫状況（4/20 時点）</div><div class="stock-grid">';
-  STOCK.forEach(function(s){
-    html += '<div class="stock-cell"><div class="stock-name">'+s.name+'</div><div class="stock-val '+s.lv+'">'+s.val+'</div></div>';
-  });
-  html += '</div>';
-  document.getElementById("stockView").innerHTML = html;
+function rStock(){
+  show("stockView");
+  var h='<div class="sec-title">📦 在庫状況（4/20確認・4/22一部更新）</div><div class="stk-grid">';
+  STOCK.forEach(function(s){h+='<div class="stk-cell"><div class="stk-name">'+s.n+'</div><div class="stk-val '+s.l+'">'+s.v+'</div></div>'});
+  document.getElementById("stockView").innerHTML=h+"</div>";
 }
 
-function renderHandover(){
-  document.getElementById("boardView").classList.add("hidden");
-  document.getElementById("stockView").classList.add("hidden");
-  document.getElementById("handoverView").classList.remove("hidden");
-  var pending = state.tasks.filter(function(t){return t.status!=="done"});
-  var html = '<div class="handover-title">📋 翌日引き継ぎ（未完了 '+pending.length+'件）</div>';
-  if(!pending.length){
-    html += '<div class="handover-empty">全タスク完了！引き継ぎなし 🎉</div>';
-  } else {
-    pending.forEach(function(t){
-      html += '<div class="handover-card"><div class="handover-badges">';
-      html += '<span class="badge '+(CAT_COLORS[t.cat]||"badge-close")+'">'+t.cat+'</span>';
-      if(t.status==="doing") html += '<span style="font-size:10px;color:var(--brown);font-weight:500;margin-left:4px">対応中</span>';
-      if(t.pri==="high") html += '<span class="badge badge-pri">急</span>';
-      html += '</div><div class="handover-text">'+t.text+'</div>';
-      if(t.comments.length){
-        t.comments.forEach(function(c){
-          html += '<div class="handover-comment">💬 '+c.by+'（'+c.at+'）: '+c.text+'</div>';
-        });
-      }
-      html += '</div>';
-    });
-  }
-  document.getElementById("handoverView").innerHTML = html;
+function rHandover(){
+  show("handoverView");
+  var pd=st.tasks.filter(function(t){return t.s!=="done"});
+  var h='<div class="sec-title">📋 翌日引き継ぎ（未完了 '+pd.length+'件）</div>';
+  if(!pd.length){h+='<div style="text-align:center;padding:40px 0;color:#bbb;font-size:13px">全タスク完了！🎉</div>';}
+  else{pd.forEach(function(t){
+    var vc=t.c.filter(function(c){return c.t});
+    h+='<div class="ho-card"><div class="badges"><span class="b '+(BMAP[t.cat]||"b-close")+'">'+t.cat+'</span>';
+    if(t.s==="doing")h+='<span style="font-size:10px;color:var(--brown);font-weight:500;margin-left:4px">対応中</span>';
+    if(t.p==="high")h+='<span class="b b-hi">急</span>';
+    h+='</div><div style="font-size:12px;line-height:1.5">'+t.text+'</div>';
+    vc.forEach(function(c){h+='<div class="ho-note">💬 '+c.by+(c.at?"（"+c.at+"）":"")+': '+c.t+'</div>'});
+    h+='</div>';
+  });}
+  document.getElementById("handoverView").innerHTML=h;
 }
 
-function openModal(id){
-  openCardId = id;
-  var t = state.tasks.find(function(x){return x.id===id});
-  if(!t) return;
-  var html = '<div class="modal" onclick="event.stopPropagation()">';
-  html += '<div class="modal-badges">';
-  html += '<span class="badge '+(CAT_COLORS[t.cat]||"badge-close")+'">'+t.cat+'</span>';
-  if(t.pri==="high") html += '<span class="badge badge-pri">急</span>';
-  html += '<span style="font-size:10px;padding:2px 7px;border-radius:4px;background:var(--bg);color:var(--muted)">'+(t.status==="todo"?"未着手":t.status==="doing"?"対応中":"完了")+'</span>';
-  html += '</div>';
-  html += '<div class="modal-title">'+t.text+'</div>';
-  if(t.doneBy) html += '<div class="modal-done">✓ '+t.doneBy+' が '+t.doneAt+' に完了</div>';
-  html += '<div class="move-btns">';
-  COLS.forEach(function(c){
-    if(c.key===t.status) return;
-    var cls = c.key==="done"?"move-done":c.key==="doing"?"move-doing":"move-todo";
-    html += '<button class="move-btn '+cls+'" onclick="moveTask(\''+id+'\',\''+c.key+'\')">'+c.icon+' '+c.label+'</button>';
-  });
-  html += '</div>';
-  html += '<div class="comments-section"><div class="comments-label">コメント</div>';
-  if(!t.comments.length) html += '<div style="font-size:11px;color:#ccc;margin-bottom:6px">まだありません</div>';
-  t.comments.forEach(function(c){
-    html += '<div class="comment-item"><div class="comment-by">'+c.by+'（'+c.at+'）</div><div class="comment-text">'+c.text+'</div></div>';
-  });
-  html += '<div class="comment-form"><input class="comment-input" id="commentInput" placeholder="コメントを追加..." onkeydown="if(event.key===\'Enter\')addComment(\''+id+'\')"><button class="comment-send" onclick="addComment(\''+id+'\')">送信</button></div>';
-  html += '</div>';
-  html += '<div class="modal-footer"><button class="btn-delete" onclick="deleteTask(\''+id+'\')">削除</button><button class="btn-close" onclick="closeModal()">閉じる</button></div>';
-  html += '</div>';
-  var overlay = document.getElementById("modalOverlay");
-  overlay.innerHTML = html;
-  overlay.classList.remove("hidden");
-  overlay.onclick = closeModal;
-}
-function closeModal(){document.getElementById("modalOverlay").classList.add("hidden");openCardId=null}
-
-function moveTask(id,newStatus){
-  state.tasks.forEach(function(t){
-    if(t.id!==id) return;
-    t.status = newStatus;
-    if(newStatus==="done"){t.doneBy=state.staffName||"（未入力）";t.doneAt=now()}
-    else{t.doneBy="";t.doneAt=""}
-  });
-  save();closeModal();render();
+function rLog(){
+  show("logView");
+  var h='<div class="sec-title">📝 共有事項日誌（最新順）</div>';
+  LOG.forEach(function(l){h+='<div class="log-item"><div class="log-hdr"><span class="log-date">'+l.d+'</span><span class="log-by">'+l.by+'</span></div><div class="log-txt">'+l.t+'</div></div>'});
+  document.getElementById("logView").innerHTML=h;
 }
 
-function addComment(id){
-  var inp = document.getElementById("commentInput");
-  if(!inp||!inp.value.trim()) return;
-  state.tasks.forEach(function(t){
-    if(t.id!==id) return;
-    t.comments.push({by:state.staffName||"匿名",at:now().split(" ")[0],text:inp.value.trim()});
-  });
-  save();openModal(id);
+function openM(id){
+  openId=id;var t=st.tasks.find(function(x){return x.id===id});if(!t)return;
+  var vc=t.c.filter(function(c){return c.t});
+  var h='<div class="modal" onclick="event.stopPropagation()">';
+  h+='<div class="badges" style="margin-bottom:8px"><span class="b '+(BMAP[t.cat]||"b-close")+'">'+t.cat+'</span>';
+  if(t.p==="high")h+='<span class="b b-hi">急</span>';else if(t.p==="mid")h+='<span class="b b-mid">中</span>';
+  h+='<span style="font-size:10px;padding:2px 7px;border-radius:4px;background:var(--bg);color:var(--muted)">'+(t.s==="todo"?"未着手":t.s==="doing"?"対応中":"完了")+'</span></div>';
+  h+='<div class="m-title">'+t.text+'</div>';
+  if(t.db)h+='<div class="m-done">✓ '+t.db+' が '+t.da+' に完了</div>';
+  h+='<div class="move-row">';
+  COLS.forEach(function(c){if(c.k===t.s)return;var cl=c.k==="done"?"mv-done":c.k==="doing"?"mv-doing":"mv-todo";h+='<button class="mv '+cl+'" onclick="moveTask(\''+id+'\',\''+c.k+'\')">'+c.i+' '+c.l+'</button>'});
+  h+='</div><div class="cmt-sec"><div class="cmt-lbl">コメント</div>';
+  if(!vc.length)h+='<div style="font-size:11px;color:#ccc;margin-bottom:6px">まだありません</div>';
+  vc.forEach(function(c){h+='<div class="cmt-item"><div class="cmt-by">'+c.by+(c.at?"（"+c.at+"）":"")+'</div><div class="cmt-txt">'+c.t+'</div></div>'});
+  h+='<div class="cmt-form"><input class="cmt-inp" id="ci" placeholder="コメントを追加..." onkeydown="if(event.key===\'Enter\')addCmt(\''+id+'\')"><button class="cmt-send" onclick="addCmt(\''+id+'\')">送信</button></div>';
+  h+='</div><div class="m-footer"><button class="btn-del" onclick="delTask(\''+id+'\')">削除</button><button class="btn-cls" onclick="closeM()">閉じる</button></div></div>';
+  var ol=document.getElementById("ov");ol.innerHTML=h;ol.classList.remove("hidden");ol.onclick=closeM;
 }
+function closeM(){document.getElementById("ov").classList.add("hidden");openId=null}
 
-function deleteTask(id){
-  state.tasks = state.tasks.filter(function(t){return t.id!==id});
-  save();closeModal();render();
+function moveTask(id,ns){
+  st.tasks.forEach(function(t){if(t.id!==id)return;t.s=ns;if(ns==="done"){t.db=st.nm||"（未入力）";t.da=nstr()}else{t.db="";t.da=""}});
+  save();closeM();render();
 }
-
-function startAdd(col){addingToCol=col;render()}
-function cancelAdd(){addingToCol=null;render()}
+function addCmt(id){
+  var i=document.getElementById("ci");if(!i||!i.value.trim())return;
+  var d=new Date();
+  st.tasks.forEach(function(t){if(t.id!==id)return;t.c.push({by:st.nm||"匿名",at:(d.getMonth()+1)+"/"+d.getDate(),t:i.value.trim()})});
+  save();openM(id);
+}
+function delTask(id){st.tasks=st.tasks.filter(function(t){return t.id!==id});save();closeM();render()}
+function startAdd(col){addCol=col;render()}
+function cancelAdd(){addCol=null;render()}
 function addTask(col){
-  var inp = document.getElementById("addInput");
-  if(!inp||!inp.value.trim()) return;
-  state.tasks.push({id:"t"+Date.now(),text:inp.value.trim(),cat:"注意",status:col,pri:"mid",comments:[],doneBy:"",doneAt:""});
-  addingToCol=null;save();render();
+  var i=document.getElementById("ai");if(!i||!i.value.trim())return;
+  st.tasks.push({id:"t"+Date.now(),text:i.value.trim(),cat:"注意",s:col,p:"mid",c:[],db:"",da:""});
+  addCol=null;save();render();
 }
 
-document.querySelectorAll(".tab").forEach(function(tab){
+document.querySelectorAll(".tab[data-view]").forEach(function(tab){
   tab.addEventListener("click",function(){
-    document.querySelectorAll(".tab").forEach(function(t){t.classList.remove("active")});
-    tab.classList.add("active");
-    currentView = tab.dataset.view;
-    render();
+    document.querySelectorAll(".tab[data-view]").forEach(function(t){t.classList.remove("active")});
+    tab.classList.add("active");view=tab.dataset.view;render();
   });
 });
-document.getElementById("nameInput").addEventListener("input",function(e){state.staffName=e.target.value;save()});
+document.getElementById("nameInput").addEventListener("input",function(e){st.nm=e.target.value;save()});
 document.getElementById("resetBtn").addEventListener("click",function(){
-  if(!confirm("今日のタスクをリセットしますか？")) return;
-  state.tasks = DEFAULT_TASKS.map(function(t){return JSON.parse(JSON.stringify(t))});
-  save();render();
+  if(!confirm("リセットしますか？"))return;
+  st.tasks=DT.map(function(t){return JSON.parse(JSON.stringify(t))});save();render();
 });
-
-load();
-render();
+load();render();
 </script>
 </body>
 </html>
